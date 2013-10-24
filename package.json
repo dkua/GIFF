@@ -1,0 +1,25 @@
+{
+  "name": "VideoQuilt",
+  "version": "0.0.0",
+  "description": "NodeJS app for Assignment #2 of CSCC09 F2013",
+  "main": "server.js",
+  "dependencies": {
+    "sqlite3": "~2.1.18",
+    "orm": "~2.1.3",
+    "express": "~3.4.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"A-okay!\"",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/dkua/VideoQuilt.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dkua/VideoQuilt/issues"
+  }
+}
