@@ -6,7 +6,7 @@ var databaseFile = "database.sqlite3";
 var port = 41156;
 var address = "localhost";
 
-app.use(orm.express("sqlite://db/" + databaseFile, {
+app.use(orm.express("sqlite://" + databaseFile, {
   define: function(db, models, next) {
     models.vote = db.define("vote", {
       clipID: String,
