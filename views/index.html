@@ -3,29 +3,43 @@
 <head>
 <title>Video Quilt</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="jquery.mobile-1.3.2.min.css" />
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
 <script src="../static/js/jquery-1.9.1.min.js"></script>
 <script src="../static/js/jquery.mobile-1.3.2.min.js"></script>
 <style>
-@media all and (max-width: 20em) {
-	.my-breakpoint .ui-block-a , 
-	.my-breakpoint .ui-block-b , 
-	.my-breakpoint .ui-block-c ,
-	.my-breakpoint .ui-block-d,
-	.my-breakpoint .ui-block-e { 
+@media all and (max-width: 48em) {
+	.my-breakpoint .ui-block-a { 
 		width: 100%; 
 		float:none; 
+		horizontal-align: middle;
+		text-align:center
+	}, 
+	.my-breakpoint .ui-block-b{ 
+		width: 100%; 
+		float:none; 
+		horizontal-align: middle;
+		text-align:center
 	}
 }
-@media all and (max-width: 40em) {
-	.my-breakpoint2 .ui-block-a , 
-	.my-breakpoint2 .ui-block-b , 
-	.my-breakpoint2 .ui-block-c ,
-	.my-breakpoint2 .ui-block-d,
-	.my-breakpoint2 .ui-block-e { 
+@media all and (max-width: 65em) {
+	.my-breakpoint2 .ui-block-a { 
 		width: 100%; 
 		float:none; 
+		horizontal-align: middle;
+		text-align:center
+	}, 
+	.my-breakpoint2 .ui-block-b { 
+		width: 100%; 
+		float:none; 
+		horizontal-align: middle;
+		text-align:center
 	}
+}
+
+div.image_container {
+	width: 17em;
+	height: 10em;
+	horizontal-align: middle;
 }
 
 </style>
@@ -38,22 +52,29 @@ function build_grid(arr)
 	arr_len = arr.length;
 	for (var i=0; i<arr_len; i++)
 	{
-		arr[i] = "<div id=\"" + i.toString() + "\">" + arr[i]+"</div>";
+		arr[i] = "<div id=\"img" + i.toString() + "\" class=\"image_container\">" 
+		+ arr[i] + "  </div> <p align=\"left\"><a href=\"another.html\">Like</a>  <a href=\"another.html\">Dislike</a></p>";
 	}
 	
-	var num_rows = arr_len / 4;
+	var num_rows = arr_len / 4.0;
 	for (var i=0; i<num_rows; i++) {
 		row += "<div class=\"ui-grid-a ui-responsive my-breakpoint\">\n";
 			row += "<div class=\"ui-block-b ui-responsive\">\n";
 				row += "<div class=\"ui-grid-a ui-responsive my-breakpoint2\">\n";
-					row += "<div class=\"ui-block-b ui-responsive\">" + arr[4*i] + "</div>\n";
-					row += "<div class=\"ui-block-b ui-responsive\">" + arr[4*i+1] + "</div>\n";
+					row += "<div class=\"ui-block-b ui-responsive\">" + arr[4*i] + "<hr></div>\n";
+					if ((4*i+1) < arr_len){
+						row += "<div class=\"ui-block-b ui-responsive\">" + arr[4*i+1]+ "<hr></div>\n";
+					}
 				row += "</div> </div>\n";
 
 			row += "<div class=\"ui-block-b ui-responsive\">\n";
 				row += "<div class=\"ui-grid-a ui-responsive my-breakpoint2\">\n";
-					row += "<div class=\"ui-block-b ui-responsive\">" + arr[4*i+2] + "</div>\n";
-					row += "<div class=\"ui-block-b ui-responsive\">" + arr[4*i+3]+ "</div>\n";
+					if ((4*i+2) < arr_len){
+						row += "<div class=\"ui-block-b ui-responsive\">" + arr[4*i+2] + "<hr></div>\n";
+					}
+					if ((4*i+3) < arr_len){
+						row += "<div class=\"ui-block-b ui-responsive\">" + arr[4*i+3] + "<hr></div>\n";
+					}
 				row += "</div> </div> </div>\n";
 		
 	}	
@@ -63,7 +84,8 @@ function build_grid(arr)
 </head>
 
 <body>
-<div class="grid">
+<div data-role="header" align="center"><H4 align="center">Video Quilt</H4></div>
+<div class="grid" style="width:1024px">
 	<div>Grid should be here.</div>
 </div>
 
@@ -74,15 +96,20 @@ function build_grid(arr)
 
 <script>
 
-var arr = ["h", "e", "l", "l", "o", "w", "o", "r", "l", "d","h", "e", 
-"l", "l", "o", "w", "o", "r", "l", "d","h", "e", "l", "l", "o", "w", 
-"o", "r", "l", "d", "<img src=\"https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQsb76uIvoNKTE9fu41M757k6UM6spveIYmZS20nB9-V76VRJ7VEdwviDoE\">", 
-"h", "e", "l", "l", "o", "w", "o", "r", "l", "d"];
+var arr = [];
+
+for (var i=0; i< 50; i++)
+{
+	arr.push("<img src=\"gundam_OO.jpg\" width=\"256\" height=\"144\" alt=\"Image fucked.\">");
+}
 
 
 $("div.grid").ready(build_grid(arr));
 
 </script>
-
+<div data-role="footer">
+<h4></h4>
+</div>
+</dir>
 </body>
 </html>
