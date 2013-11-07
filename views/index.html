@@ -15,10 +15,12 @@ var windowwidth = $(window).width();
 var json=[];
 var total_page=0;
 var clips_per_page=0;
+var num_columns=1;
 
 $(window).resize(function() {
   	windowwidth = $(window).width();
 	build_grid();
+
 });
 
 function load(page_num)
@@ -46,9 +48,13 @@ function build_grid()
 	var row = "";
 	var gif_width = 256; //width of each gif
 	var gif_height = 144;//height of each gif
-	arr = arr;
 	var column_name = ["-a", "-a", "-b", "-c", "-d", "-e"];
-	var num_columns = Math.floor(windowwidth  / gif_width);
+	if (num_columns != Math.floor(windowwidth  / gif_width))
+		num_columns = Math.floor(windowwidth  / gif_width);
+	else
+	{
+		return;
+	}
 	if (num_columns > 5) num_columns = 5;
 	if (num_columns < 1) num_columns = 1;
 
@@ -59,8 +65,8 @@ function build_grid()
 		$("#clips").append('<div id="clips_grid">\n</div>');
 		for (var j=0; j<=total_page; j++)
 		{
-			for (var i=0; i<clips_per_page; i++) {
-				$("#clips_grid").append('<div><img class="clip" width="' + gif_width + '" style="max-height:' + gif_height + 'px" src="'+ json[j].clips[i].gifs.fast + '"></img>\n</div>\n');
+			for (var i=0; i<json[j].clips.length; i++) {
+				$("#clips_grid").append('<div id="' + json[j].clips[i]._id + '" onclick=div_click(this)><img class="clip" width="' + gif_width + '" style="max-height:' + gif_height + 'px" src="'+ json[j].clips[i].gifs.fast + '"></img>\n</div>\n');
 			}
 		}
 
@@ -70,14 +76,15 @@ function build_grid()
 		$("#clips").append('<div id="clips_grid" class="ui-grid' + column_name[num_columns - 1] + '">\n</div>');
 		for (var j=0; j<=total_page; j++)
 		{
-			for (var i=0; i<clips_per_page; i++) {
-				$("#clips_grid").append('<div class="ui-block' + column_name[(i % num_columns) + 1] + '"><img class="clip" width="' + gif_width + '" style="max-height:' + gif_height + 'px" src="'+ json[j].clips[i].gifs.fast + '"></img>\n</div>\n');
+			for (var i=0; i<json[j].clips.length; i++) {
+				$("#clips_grid").append('<div class="ui-block' + column_name[(i % num_columns) + 1] + '" id="' + json[j].clips[i]._id + '" onclick=div_click(this)><img width="' + gif_width + '" style="max-height:' + gif_height + 'px" src="'+ json[j].clips[i].gifs.fast + '"></img>\n</div>\n');
 			}
 		}
 	}
-
-
 }
+
+
+
 </script>
 </head>
 
@@ -89,14 +96,16 @@ function build_grid()
 
 <script>
 
-var arr = ["h", "e", "l", "l", "o", "w", "o", "r", "l", "d","h", "e", 
-"l", "l", "o", "w", "o", "r", "l", "d","h", "e", "l", "l", "o", "w", 
-"o", "r", "l", "d", "<img src=\"https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQsb76uIvoNKTE9fu41M757k6UM6spveIYmZS20nB9-V76VRJ7VEdwviDoE\">", 
-"<img src=\"https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQsb76uIvoNKTE9fu41M757k6UM6spveIYmZS20nB9-V76VRJ7VEdwviDoE\">", 
-"h", "e", "l", "l", "o", "w", "o", "r", "l", "d"];
+function div_click(ele)
+{
+	$(ele).empty();
+	$(ele).append('<video src="http://videogami.s3.amazonaws.com/sportslive/' + ele.id + '.mp4" type="video/mp4" controls preload></video>');
+}
 
-$("div.grid").ready(load(0));
-//$("div.grid").ready(build_grid());
+$(document).ready(function(){
+  	load(0);
+});
+
 
 </script>
 </div>
