@@ -12,9 +12,12 @@
 
 <script>
 var windowwidth = $(window).width();
-var json=[];
-var total_page=0;
+var clips_list=[];
+var videos_list=[];
+var clips_total_page=0;
+var videos_total_page=0;
 var clips_per_page=0;
+var video_per_page=0;
 var num_columns=1;
 
 $(window).resize(function() {
@@ -23,22 +26,42 @@ $(window).resize(function() {
 
 });
 
-function load(page_num)
+function load_videos(page_num)
 {
-	$.getJSON("http://api.videogami.co/clips",{username:"vdgamers", token:"7eb1d52ac16ae97b403b58f03b3301d14352e8d641b400a0", page:page_num}, function(result){
-		json[page_num] = result;
+	$.getJSON("http://api.videogami.co/videos",{username:"vdgamers", token:"7eb1d52ac16ae97b403b58f03b3301d14352e8d641b400a0", page:page_num}, function(result){
+		videos_list[page_num] = result;
 		if (result.page == 0)
 		{
-			clips_per_page=result.count;
-			total_page=Math.floor(result.total/clips_per_page);
+			video_per_page=result.count;
+			videos_total_page=Math.floor(result.total/clips_per_page);
 		}
-		if (result.page == total_page)
+		if (result.page == videos_total_page)
 		{
 			build_grid();
 		}
 		else
 		{
-			load(page_num + 1);
+			load_clips(page_num + 1);
+		}
+	}).fail(function(){alert("Fail");});
+}
+
+function load_clips(page_num)
+{
+	$.getJSON("http://api.videogami.co/clips",{username:"vdgamers", token:"7eb1d52ac16ae97b403b58f03b3301d14352e8d641b400a0", page:page_num}, function(result){
+		clips_list[page_num] = result;
+		if (result.page == 0)
+		{
+			clips_per_page=result.count;
+			clips_total_page=Math.floor(result.total/clips_per_page);
+		}
+		if (result.page == clips_total_page)
+		{
+			build_grid();
+		}
+		else
+		{
+			load_clips(page_num + 1);
 		}
 	}).fail(function(){alert("Fail");});
 }
@@ -46,8 +69,7 @@ function load(page_num)
 function build_grid()
 {
 	var row = "";
-	var gif_width = 256; //width of each gif
-	var gif_height = 144;//height of each gif
+
 	var column_name = ["-a", "-a", "-b", "-c", "-d", "-e"];
 	if (num_columns != Math.floor(windowwidth  / gif_width))
 		num_columns = Math.floor(windowwidth  / gif_width);
@@ -63,10 +85,10 @@ function build_grid()
 	if (num_columns == 1)
 	{
 		$("#clips").append('<div id="clips_grid">\n</div>');
-		for (var j=0; j<=total_page; j++)
+		for (var j=0; j<=clips_total_page; j++)
 		{
-			for (var i=0; i<json[j].clips.length; i++) {
-				$("#clips_grid").append('<div id="' + json[j].clips[i]._id + '" onclick=div_click(this)><img class="clip" width="' + gif_width + '" style="max-height:' + gif_height + 'px" src="'+ json[j].clips[i].gifs.fast + '"></img>\n</div>\n');
+			for (var i=0; i<clips_list[j].clips.length; i++) {
+				$("#clips_grid").append('<div id="' + clips_list[j].clips[i]._id + '" onclick=div_click(this)><img class="clip" width="' + gif_width + '" style="max-height:' + gif_height + 'px" src="'+ clips_list[j].clips[i].gifs.fast + '"></img>\n</div>\n');
 			}
 		}
 
@@ -74,10 +96,10 @@ function build_grid()
 	else
 	{
 		$("#clips").append('<div id="clips_grid" class="ui-grid' + column_name[num_columns - 1] + '">\n</div>');
-		for (var j=0; j<=total_page; j++)
+		for (var j=0; j<=clips_total_page; j++)
 		{
-			for (var i=0; i<json[j].clips.length; i++) {
-				$("#clips_grid").append('<div class="ui-block' + column_name[(i % num_columns) + 1] + '" id="' + json[j].clips[i]._id + '" onclick=div_click(this)><img width="' + gif_width + '" style="max-height:' + gif_height + 'px" src="'+ json[j].clips[i].gifs.fast + '"></img>\n</div>\n');
+			for (var i=0; i<clips_list[j].clips.length; i++) {
+				$("#clips_grid").append('<div class="ui-block' + column_name[(i % num_columns) + 1] + '" id="' + clips_list[j].clips[i]._id + '" onclick=div_click(this)><img width="' + gif_width + '" style="max-height:' + gif_height + 'px" src="'+ clips_list[j].clips[i].gifs.fast + '"></img>\n</div>\n');
 			}
 		}
 	}
@@ -95,19 +117,42 @@ function build_grid()
 </div>
 
 <script>
+var gif_width = 256; //width of each gif
+var gif_height = 144;//height of each gif
 
 function div_click(ele)
 {
-	$(ele).empty();
-	$(ele).append('<video src="http://videogami.s3.amazonaws.com/sportslive/' + ele.id + '.mp4" type="video/mp4" controls preload></video>');
+	var clipId = $(ele).attr("id");
+	var pid;
+	
+	$.each(clips_list, function(i, page){
+		$.each(page.clips, function(n, item){
+				if (clipId == item._id){
+					pid = item.parent.pID;
+				}
+			}				
+		);	
+	});
+	
+	$('#player').empty();
+	$('#player').append('<source src="http://videogami.s3.amazonaws.com/sportslive/' + pid + '.mp4">');
+	$('#player').append('<source src="http://videogami.s3.amazonaws.com/sportslive/' + pid + '.webm">');
+	$("#player").load();
+	$('#popUp').popup('open');
 }
 
 $(document).ready(function(){
-  	load(0);
+  	load_clips(0);
+  	load_videos(0);
 });
 
 
 </script>
+
+<div id="popUp" data-role="popup" class="ui-content">
+	<video id="player" height="320" width="420" controls>
+	</video>
+</div>
 </div>
 </body>
 </html>
