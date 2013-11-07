@@ -17,6 +17,7 @@ var databaseFile = "database.sqlite3";
 
 // Configurations
 app.configure(function() {
+  app.use("/static", express.static(__dirname + "/static"));
   app.set("port", process.env.PORT || 41156);
   app.use(express.cookieParser());
   app.use(express.session({
