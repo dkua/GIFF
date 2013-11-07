@@ -8,15 +8,19 @@ var express = require("express"),
     app = express();
 var orm = require("orm");
 var http = require("http");
+var SQLiteStore = require("connect-sqlite3")(express);
 
-//Sessions
-app.use(express.cookieParser());
-app.use(express.session({
-  secret: env.get("SESSION_SECRET"),
-  cookie: {
-    maxAge: 2678400000 // 31 day limit
-  }
-}));
+// Configurations
+app.configure(function() {
+  app.use(express.cookieParser());
+  app.use(express.session({
+    store: new SQLiteStore,
+    secret: env.get("SESSION_SECRET"),
+    cookie: {
+      maxAge: 2678400000 // 31 day limit
+    }
+  }));
+});
 
 
 // Variables
