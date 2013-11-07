@@ -1,8 +1,23 @@
 // Dependencies
-var express = require("express");
+var express = require("express"),
+    env = (function() {
+      var Habitat = require("habitat");
+      Habitat.load;
+      return new Habitat();
+    }()),
+    app = express();
 var orm = require("orm");
 var http = require("http");
-var app = express();
+
+//Sessions
+app.use(express.cookieParser());
+app.use(express.session({
+  secret: env.get("SESSION_SECRET"),
+  cookie: {
+    maxAge: 2678400000 // 31 day limit
+  }
+}));
+
 
 // Variables
 var databaseFile = "database.sqlite3";
