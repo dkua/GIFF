@@ -12,18 +12,32 @@
 
 <script>
 var windowwidth = $(window).width();
-var json;
+var json=[];
+var total_page=0;
+var clips_per_page=0;
 
 $(window).resize(function() {
   	windowwidth = $(window).width();
 	build_grid();
 });
 
-function load()
+function load(page_num)
 {
-	$.getJSON("http://api.videogami.co/clips",{username:"vdgamers", token:"7eb1d52ac16ae97b403b58f03b3301d14352e8d641b400a0", page:2}, function(result){
-		json = result;
-		build_grid();
+	$.getJSON("http://api.videogami.co/clips",{username:"vdgamers", token:"7eb1d52ac16ae97b403b58f03b3301d14352e8d641b400a0", page:page_num}, function(result){
+		json[page_num] = result;
+		if (result.page == 0)
+		{
+			clips_per_page=result.count;
+			total_page=Math.floor(result.total/clips_per_page);
+		}
+		if (result.page == total_page)
+		{
+			build_grid();
+		}
+		else
+		{
+			load(page_num + 1);
+		}
 	}).fail(function(){alert("Fail");});
 }
 
@@ -33,26 +47,32 @@ function build_grid()
 	var gif_width = 256; //width of each gif
 	var gif_height = 144;//height of each gif
 	arr = arr;
-	arr_len = 20;
 	var column_name = ["-a", "-a", "-b", "-c", "-d", "-e"];
 	var num_columns = Math.floor(windowwidth  / gif_width);
 	if (num_columns > 5) num_columns = 5;
 	if (num_columns < 1) num_columns = 1;
 
-	var num_rows = Math.ceil(arr_len / num_columns);
+	var num_rows = Math.ceil(clips_per_page / num_columns);
 	$("#clips").empty();
 	if (num_columns == 1)
 	{
 		$("#clips").append('<div id="clips_grid">\n</div>');
-		for (var i=0; i<arr_len; i++) {
-			$("#clips_grid").append('<div><img class="clip" width="' + gif_width + '" style="max-height:' + gif_height + 'px" src="'+ json.clips[i].gifs.fast + '"></img>\n</div>\n');
+		for (var j=0; j<=total_page; j++)
+		{
+			for (var i=0; i<clips_per_page; i++) {
+				$("#clips_grid").append('<div><img class="clip" width="' + gif_width + '" style="max-height:' + gif_height + 'px" src="'+ json[j].clips[i].gifs.fast + '"></img>\n</div>\n');
+			}
 		}
+
 	}
 	else
 	{
 		$("#clips").append('<div id="clips_grid" class="ui-grid' + column_name[num_columns - 1] + '">\n</div>');
-		for (var i=0; i<arr_len; i++) {
-			$("#clips_grid").append('<div class="ui-block' + column_name[(i % num_columns) + 1] + '"><img class="clip" width="' + gif_width + '" style="max-height:' + gif_height + 'px" src="'+ json.clips[i].gifs.fast + '"></img></div>\n');
+		for (var j=0; j<=total_page; j++)
+		{
+			for (var i=0; i<clips_per_page; i++) {
+				$("#clips_grid").append('<div class="ui-block' + column_name[(i % num_columns) + 1] + '"><img class="clip" width="' + gif_width + '" style="max-height:' + gif_height + 'px" src="'+ json[j].clips[i].gifs.fast + '"></img>\n</div>\n');
+			}
 		}
 	}
 
@@ -75,7 +95,7 @@ var arr = ["h", "e", "l", "l", "o", "w", "o", "r", "l", "d","h", "e",
 "<img src=\"https://encrypted-tbn3.gstatic.com/images?q=tbn:ANd9GcQsb76uIvoNKTE9fu41M757k6UM6spveIYmZS20nB9-V76VRJ7VEdwviDoE\">", 
 "h", "e", "l", "l", "o", "w", "o", "r", "l", "d"];
 
-$("div.grid").ready(load());
+$("div.grid").ready(load(0));
 //$("div.grid").ready(build_grid());
 
 </script>
