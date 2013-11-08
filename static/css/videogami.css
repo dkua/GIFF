@@ -3,6 +3,12 @@ img {
   max-width: 100%;
 }
 
-.cell {
-  text-align: center;
+.ui-content {
+  background-color: #333;
+}
+
+.ui-body-d, .ui-overlay-d {
+  background: #333;
+  border: 0px;
+  color: #fff;
 }

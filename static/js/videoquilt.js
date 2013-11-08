@@ -11,11 +11,13 @@ function buildGrid() {
   var blockD = $("<div>", { class: "ui-block-d" });
   var blockE = $("<div>", { class: "ui-block-e" });
   var blockList = [blockA, blockB, blockC, blockD, blockE];
-  var blockBody = $("<div>", { class: "ui-body ui-body-d cell" });
+  var blockBody = $("<div>", { class: "cell ui-body ui-body-d" });
 
-  var button = $("<button />");
+  var button = $("<a href='#' data-role='button' data-mini='true'>");
+  var btnGroup = $("<div>", { "data-role": "controlgroup", "data-type": "horizontal", "data-mini": "true" });
 
   getClips( function(total, clips) {
+    $("#header").find("h1").text("GIFF (" + total + " Clips)");
     for (var i=0; i<total; i+=5) {
       tempArray = clips.slice(i, i+5);
       for (var k=0; k<tempArray.length; k++) {
@@ -23,14 +25,20 @@ function buildGrid() {
         var clip = tempArray[k];
         var title = $("<p />").text(clip.title);
         var description = $("<p />").text(clip.description);
-        var screenshot = $("<img />").attr({ src: clip.screenshot, alt: clip.title });
+        var screenshot = $("<img />").attr({ src: clip.screenshot, alt: clip.title, cid: clip._id, onclick: "playClip(this)" });
         var numVotes = getNumVotes(clip._id);
-        var upvote = button.clone().attr({ id: "upvote", onclick: "upvote(this)", cid: clip._id }).text("Upvote (" + numVotes.upvotes + ")");
-        var downvote = button.clone().attr({ id: "downvote", onclick: "downvote(this)", cid: clip._id }).text("Downvote (" + numVotes.downvotes + ")");
+        var upvote = button.clone().attr({ id: "upvote", onclick: "upvote(this)", cid: clip._id, "data-icon": "arrow-u" }).text(numVotes.upvotes).button();
+        var downvote = button.clone().attr({ id: "downvote", onclick: "downvote(this)", cid: clip._id, "data-icon": "arrow-d" }).text(numVotes.downvotes).button();
+        if (numVotes.voted === 1) {
+          upvote.addClass("ui-btn-active");
+        } else if (numVotes.voted === -1) {
+          downvote.addClass("ui-btn-active");
+        }
+        var buttons = btnGroup.clone().append(upvote, downvote).controlgroup();
 
         var body = blockBody.clone().attr({
           cid: clip._id 
-        }).append(title).append(description).append(screenshot).append(upvote, downvote);
+        }).append(title, description, screenshot, buttons);
         var block = blockList[k].clone().append(body);
         grid.append(block);
       }
@@ -71,8 +79,11 @@ function upvote(caller) {
       console.log(data.success);
       if (data.success) {
         var numVotes = getNumVotes(cid);
-        button.attr({ disabled: true }).text("Upvotes (" + numVotes.upvotes + ")");
-        button.parent().find("#downvote").attr({ disabled: false }).text("Downvotes (" + numVotes.downvotes + ")");
+        var otherButton = button.parent().find("#downvote");
+        button.addClass("ui-btn-active");
+        otherButton.removeClass("ui-btn-active");
+        button.find(".ui-btn-text").text(numVotes.upvotes);
+        otherButton.find(".ui-btn-text").text(numVotes.downvotes);
       }
       });
 }
@@ -84,8 +95,11 @@ function downvote(caller) {
       console.log(data.success);
       if (data.success) {
         var numVotes = getNumVotes(cid);
-        button.attr({ disabled: true }).text("Downvotes (" + numVotes.downvotes + ")");
-        button.parent().find("#upvote").attr({ disabled: false }).text("Upvotes (" + numVotes.upvotes + ")");
+        var otherButton = button.parent().find("#upvote");
+        button.addClass("ui-btn-active");
+        otherButton.removeClass("ui-btn-active");
+        button.find(".ui-btn-text").text(numVotes.downvotes);
+        otherButton.find(".ui-btn-text").text(numVotes.upvotes);
       }
       });
 }
@@ -103,3 +117,58 @@ function getNumVotes(clipID) {
   });
   return result;
 }
+
+function playClip(caller) {
+  console.log("VIDEO");
+  var pic = $(caller);
+  var cid = pic.attr("cid");
+  $("#popupVideo").html(
+      "<video width='0' height='0' controls> <source src='http://videogami.s3.amazonaws.com/" + cid + ".webm' type='video/webm' /><source src='http://videogami.s3.amazonaws.com/" + cid + ".mp4' type='video/mp4' /></video>"
+      );
+  $( "#popupVideo video" )
+    .attr( "width", 0 )
+    .attr( "height", 0 );
+
+  $( "#popupVideo" ).on({
+    popupbeforeposition: function() {
+      var size = scale( 497, 298, 15, 1 ),
+    w = size.width,
+    h = size.height;
+
+  $( "#popupVideo video" )
+    .attr( "width", w )
+    .attr( "height", h );
+    },
+    popupafterclose: function() {
+      $( "#popupVideo video" )
+    .attr( "width", 0 )
+    .attr( "height", 0 );
+    }
+  });
+}
+
+function scale( width, height, padding, border ) {
+  var scrWidth = $( window ).width() - 30,
+      scrHeight = $( window ).height() - 30,
+      ifrPadding = 2 * padding,
+      ifrBorder = 2 * border,
+      ifrWidth = width + ifrPadding + ifrBorder,
+      ifrHeight = height + ifrPadding + ifrBorder,
+      h, w;
+
+  if ( ifrWidth < scrWidth && ifrHeight < scrHeight ) {
+    w = ifrWidth;
+    h = ifrHeight;
+  } else if ( ( ifrWidth / scrWidth ) > ( ifrHeight / scrHeight ) ) {
+    w = scrWidth;
+    h = ( scrWidth / ifrWidth ) * ifrHeight;
+  } else {
+    h = scrHeight;
+    w = ( scrHeight / ifrHeight ) * ifrWidth;
+  }
+
+  return {
+    'width': w - ( ifrPadding + ifrBorder ),
+      'height': h - ( ifrPadding + ifrBorder )
+  };
+};

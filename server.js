@@ -102,11 +102,19 @@ app.get("/clips/:id/vote", function(req, res) {
 
 app.get("/clips/:id/votes", function(req, res) {
   req.models.vote.getAllVotes(req.params.id, 1, function(err, upvotes) {
-    var result = {}
-    result.upvotes = upvotes.length;
-    req.models.vote.getAllVotes(req.params.id, -1, function(err, downvotes) {
-      result.downvotes = downvotes.length;
-      res.json(result);
+    req.models.vote.getVote(req.params.id, req.sessionID, function(err, voteArray) {
+      var result = {}
+      var vote = voteArray[0];
+      if (typeof(vote) !== "undefined") {
+        result.voted = vote.value;
+      } else {
+        result.voted = 0;
+      }
+      result.upvotes = upvotes.length;
+      req.models.vote.getAllVotes(req.params.id, -1, function(err, downvotes) {
+        result.downvotes = downvotes.length;
+        res.json(result);
+      });
     });
   });
 });

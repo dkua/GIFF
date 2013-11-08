@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Video Quilt</title>
+<title>GIFF</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="/static/js/jquery-1.9.1.min.js"></script>
 <script src="/static/js/jquery.mobile-1.3.2.js"></script>
@@ -10,14 +10,15 @@
 </head>
 <body>
 <div data-role="page">
-  <div data-role="header">
-    <h1>Video Quilt</h1>
+  <div id="header" data-role="header">
+    <h1>GIFF</h1>
   </div>
-  <div data-role="content">	
+  <div id="content" data-role="content">	
     <div class="ui-grid-d ui-responsive" id="grid"></div>
   </div>
 </div>
-
+<div data-role="popup" id="popupVideo" data-overlay-theme="a" data-theme="d" data-tolerance="15,15" class="ui-content">
+</div>
 <script src="/static/js/videoquilt.js"></script>
 <script>
 $(document).ready(function() {
