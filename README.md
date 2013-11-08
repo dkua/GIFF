@@ -1,4 +1,4 @@
-## Video Quilt
+## GIFF
 
 Project #2 for CSCC09. An HTML5 web application that displays a quilt of videos with responsive design
 retrieved from the Videogami API with functions of upvote and downvote for each video.
