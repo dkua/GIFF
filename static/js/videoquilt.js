@@ -25,7 +25,7 @@ function buildGrid() {
         var clip = tempArray[k];
         var title = $("<p />").text(clip.title);
         var description = $("<p />").text(clip.description);
-        var screenshot = $("<img />").attr({ src: clip.screenshot, alt: clip.title, cid: clip._id, onclick: "playClip(this)", "data-rel": 'popup' });
+        var screenshot = $("<img />").attr({ src: clips.screenshot, "data-src": clip.gifs.normal, alt: clip.title, cid: clip._id, onclick: "playClip(this)", "data-rel": 'popup' });
         var numVotes = getNumVotes(clip._id);
         var upvote = button.clone().attr({ id: "upvote", onclick: "upvote(this)", cid: clip._id, "data-icon": "arrow-u" }).text(numVotes.upvotes).button();
         var downvote = button.clone().attr({ id: "downvote", onclick: "downvote(this)", cid: clip._id, "data-icon": "arrow-d" }).text(numVotes.downvotes).button();
