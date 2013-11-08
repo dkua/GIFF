@@ -13,4 +13,4 @@ retrieved from the Videogami API with functions of upvote and downvote for each 
 
 ## Server link
 
-mathlab.utsc.utoronto.ca:41156
+[s0.dkua.ca:41156](s0.dkua.ca:41156)
