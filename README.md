@@ -14,3 +14,6 @@ retrieved from the Videogami API with functions of upvote and downvote for each 
 ## Server link
 
 [http://s0.dkua.ca:41156](http://s0.dkua.ca:41156)
+
+We were receiving errors when running our server on mathlab, hence why we are providng an alternative link for
+running our server.
