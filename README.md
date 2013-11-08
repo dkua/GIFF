@@ -1,7 +1,7 @@
-##Video Quilt
+## Video Quilt
 
-Project #2 for CSCC09. A RESTful API that displays a responsive quilt of videos
-retrieved from videogami.com with functions of upvote and downvote for each video.
+Project #2 for CSCC09. An HTML5 web application that displays a quilt of videos with responsive design
+retrieved from the Videogami API with functions of upvote and downvote for each video.
 
 
 ## Group members
@@ -10,3 +10,7 @@ retrieved from videogami.com with functions of upvote and downvote for each vide
 2. David Kua (998484536)
 3. Yi Zheng (997124632)
 4. Pan Xu (998448201)
+
+## Server link
+
+mathlab.utsc.utoronto.ca:41156
