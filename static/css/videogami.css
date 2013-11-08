@@ -12,3 +12,8 @@ img {
   border: 0px;
   color: #fff;
 }
+
+video {
+  width: 100%    !important;
+  height: auto   !important;
+}

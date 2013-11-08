@@ -25,7 +25,7 @@ function buildGrid() {
         var clip = tempArray[k];
         var title = $("<p />").text(clip.title);
         var description = $("<p />").text(clip.description);
-        var screenshot = $("<img />").attr({ src: clip.screenshot, alt: clip.title, cid: clip._id, onclick: "playClip(this)" });
+        var screenshot = $("<img />").attr({ src: clip.screenshot, alt: clip.title, cid: clip._id, onclick: "playClip(this)", "data-rel": 'popup' });
         var numVotes = getNumVotes(clip._id);
         var upvote = button.clone().attr({ id: "upvote", onclick: "upvote(this)", cid: clip._id, "data-icon": "arrow-u" }).text(numVotes.upvotes).button();
         var downvote = button.clone().attr({ id: "downvote", onclick: "downvote(this)", cid: clip._id, "data-icon": "arrow-d" }).text(numVotes.downvotes).button();
@@ -104,10 +104,10 @@ function downvote(caller) {
       });
 }
 
-function getNumVotes(clipID) {
+function getNumVotes(clicid) {
   var result = null;
   $.ajax({
-    url: "clips/" + clipID + "/votes",
+    url: "clips/" + clicid + "/votes",
     type: "GET",
     dataType: "json",
     async: false,
@@ -120,31 +120,12 @@ function getNumVotes(clipID) {
 
 function playClip(caller) {
   console.log("VIDEO");
-  var pic = $(caller);
-  var cid = pic.attr("cid");
-  $("#popupVideo").html(
-      "<video width='0' height='0' controls> <source src='http://videogami.s3.amazonaws.com/" + cid + ".webm' type='video/webm' /><source src='http://videogami.s3.amazonaws.com/" + cid + ".mp4' type='video/mp4' /></video>"
-      );
-  $( "#popupVideo video" )
-    .attr( "width", 0 )
-    .attr( "height", 0 );
-
-  $( "#popupVideo" ).on({
-    popupbeforeposition: function() {
-      var size = scale( 497, 298, 15, 1 ),
-    w = size.width,
-    h = size.height;
-
-  $( "#popupVideo video" )
-    .attr( "width", w )
-    .attr( "height", h );
-    },
-    popupafterclose: function() {
-      $( "#popupVideo video" )
-    .attr( "width", 0 )
-    .attr( "height", 0 );
-    }
-  });
+  var cid = $(caller).attr("cid");
+  $('#player').empty();
+  $('#player').append('<source src="http://videogami.s3.amazonaws.com/sportslive/' + cid + '.mp4" type="video/mp4">');
+  $('#player').append('<source src="http://videogami.s3.amazonaws.com/sportslive/' + cid + '.webm" type="video/webm">');
+  $("#player").load();
+  $('#popUp').popup('open');
 }
 
 function scale( width, height, padding, border ) {
