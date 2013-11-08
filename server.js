@@ -100,6 +100,17 @@ app.get("/clips/:id/vote", function(req, res) {
   });
 });
 
+app.get("/clips/:id/votes", function(req, res) {
+  req.models.vote.getAllVotes(req.params.id, 1, function(err, upvotes) {
+    var result = {}
+    result.upvotes = upvotes.length;
+    req.models.vote.getAllVotes(req.params.id, -1, function(err, downvotes) {
+      result.downvotes = downvotes.length;
+      res.json(result);
+    });
+  });
+});
+
 
 // Upvotes
 app.get("/clips/:id/upvote", function(req, res) {
@@ -111,6 +122,7 @@ app.get("/clips/:id/upvote", function(req, res) {
 
 app.post("/clips/:id/upvote", function(req, res) {
   vote(req, 1, function(result) {
+    console.log("Upvote for " + req.params.id);
     res.json({ success: result });
   });
 });
@@ -126,6 +138,7 @@ app.get("/clips/:id/downvote", function(req, res) {
 
 app.post("/clips/:id/downvote", function(req, res) {
   vote(req, -1, function(result) {
+    console.log("Downvote for " + req.params.id);
     res.json({ success: result });
   });
 });
